@@ -1,0 +1,70 @@
+module 0x1::DonationPlatform {
+
+    use aptos_std::signer;
+    use aptos_std::coin;
+    use aptos_std::event;
+    use aptos_std::timestamp;
+    use aptos_std::guid;
+
+
+    // Struct to store information about a single donation
+    struct DonationEvent has copy, drop, store {
+        donor: address,
+        amount: u64,
+        timestamp: u64,
+    }
+
+    // Struct to store platform state, including a counter of total donations
+    struct DonationPlatform has store {
+        admin: address,
+        total_donations: u64,
+        donation_event_handle: event::EventHandle<DonationEvent>,
+    }
+
+    // Initializes the donation platform
+    public entry fun initialize(account: &signer) {
+        let admin = signer::address_of(account);
+        let donation_event_handle = event::new_event_handle<DonationEvent>(guid::generate());
+        let donation_platform = DonationPlatform {
+            admin,
+            total_donations: 0,
+            donation_event_handle,
+        };
+        move_to(account, donation_platform);
+    }
+
+    // Function to make a donation
+    public entry fun donate(account: &signer, amount: u64) acquires DonationPlatform {
+        let donor_address = signer::address_of(account);
+        let donation_platform = borrow_global_mut<DonationPlatform>(donor_address);
+
+        // Transfer Aptos coins from donor to platform
+        coin::transfer(account, donation_platform.admin, amount);
+
+        // Create a new DonationEvent
+        let new_donation = DonationEvent {
+            donor: donor_address,
+            amount,
+            timestamp: timestamp::now_seconds(),
+        };
+
+        // Emit the donation event
+        0x1::event::emit_event(&mut donation_platform.donation_event_handle, new_donation);
+
+        // Update the platform's state
+        donation_platform.total_donations = donation_platform.total_donations + amount;
+    }
+
+    // Function to get the total donations on the platform
+    public fun get_total_donations(): u64 acquires DonationPlatform {
+        let donation_platform = borrow_global<DonationPlatform>(@0x97f252a5bd87fcaf915d01ae9d13c8d29cacb778ffa0336e693f53fc3ef605bb);
+        donation_platform.total_donations
+    }
+
+    // Function to retrieve all donation events
+    public fun get_donations(): vector<DonationEvent> acquires DonationPlatform {
+        let donation_platform = borrow_global<DonationPlatform>(@0x97f252a5bd87fcaf915d01ae9d13c8d29cacb778ffa0336e693f53fc3ef605bb);
+        // Use the correct method to get the events
+        0x1::event::get_events(&donation_platform.donation_event_handle)
+    }
+}

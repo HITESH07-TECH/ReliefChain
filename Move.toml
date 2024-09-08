@@ -1,0 +1,9 @@
+[package]
+name = "DonationPlatform"
+version = "0.1.0"
+
+[addresses]
+DonationPlatform = "0x1"
+
+[dependencies]
+AptosFramework = { local = "D:/SRM/Hackathons/Code4Cause(NSUT)/aptos-core-main/aptos-move/framework/aptos-framework" }

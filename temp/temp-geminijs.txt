@@ -1,0 +1,32 @@
+import { initializeGeminiClient } from './gemini';  // Assuming you're in the correct directory
+
+// Initialize the Gemini client
+const geminiClient = initializeGeminiClient();
+
+async function analyzeContractPerformance(contractData) {
+    try {
+        const analysis = await geminiClient.analyze(contractData);
+        console.log('Smart contract analysis:', analysis);
+        // Handle the analysis result, e.g., update UI or store the data
+    } catch (error) {
+        console.error('Failed to analyze smart contract:', error);
+    }
+}
+
+// Example function that triggers contract analysis after interaction
+async function handleDonation() {
+    const contractData = {
+        contractPath: 'D:/SRM/Hackathons/Code4Cause(NSUT)/ReliefChain/sources/DonationPlatform.move',
+        // Include other relevant data here, such as recent transactions or state changes
+    };
+
+    // Simulate interaction with the contract (e.g., making a donation)
+    console.log('Donation made! Now analyzing contract...');
+    
+    // Analyze the smart contract
+    await analyzeContractPerformance(contractData);
+}
+
+// Assuming this is your donate button
+const donateButton = document.querySelector("#donate-button");
+donateButton.addEventListener("click", handleDonation);
