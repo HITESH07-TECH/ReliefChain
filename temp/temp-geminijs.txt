@@ -16,7 +16,7 @@ async function analyzeContractPerformance(contractData) {
 // Example function that triggers contract analysis after interaction
 async function handleDonation() {
     const contractData = {
-        contractPath: 'D:/SRM/Hackathons/Code4Cause(NSUT)/ReliefChain/sources/DonationPlatform.move',
+        contractPath: '<path>',
         // Include other relevant data here, such as recent transactions or state changes
     };
 
